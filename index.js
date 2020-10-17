@@ -197,44 +197,63 @@ app.post('/addOrder', (req, res) => {
 
 // add course and display course from courseCollection
 
+app.post('/addCourses', (req, res) => {
+   
+   
+    const title = req.body.title;
+    const price = req.body.price;
+    const description = req.body.description;
+    const newImg = req.files.file.data;
+    const encImg = newImg.toString('base64');
+    var img = {
+        contentType: req.files.file.mimetype,
+        size: req.files.file.size,
+        img: Buffer.from(encImg, 'base64')
+    }
 
-
-
-    app.post('/addCourses', (req, res) => {
-       const file = req.files.file;
-       const title = req.body.title;
-       const price = req.body.price;
-       const description = req.body.description;
-       console.log(title, price, description, file);
-       const filePath = `${__dirname}/image/${file.name}`
-        file.mv(filePath, err=> {
-            if(err){
-                console.log(err);
-                 res.status(500).send({msg: 'Failed to Upload your Image'});
-            }
-            // return res.send({name: file.name, path: `/${file.name}`})
-
-            const newImage = fs.readFileSync(filePath);
-            const encImg = newImage.toString('base64');
-            const image = {
-                contentType: req.files.file.mimeType,
-                size: req.files.file.size,
-                img: Buffer(encImg, 'base64')
-            };
-
-
-            courseCollection.insertOne({title, price, description, image})
-            .then( result => {
-               fs.remove(filePath, error => {
-                   if (error){console.log(error);
-                    res.status(500).send({msg: 'Failed to Upload your Image'});
-                }
-                   res.send(result.insertedCount > 0)
-               })
-            })
+    courseCollection.insertOne({title, price, description, image })
+        .then(result => {
+            res.send(result.insertedCount > 0)
         })
 
-    })
+})
+
+
+    // app.post('/addCourses', (req, res) => {
+    //    const file = req.files.file;
+    //    const title = req.body.title;
+    //    const price = req.body.price;
+    //    const description = req.body.description;
+    //    console.log(title, price, description, file);
+    //    const filePath = `${__dirname}/image/${file.name}`
+    //     file.mv(filePath, err=> {
+    //         if(err){
+    //             console.log(err);
+    //              res.status(500).send({msg: 'Failed to Upload your Image'});
+    //         }
+    //         // return res.send({name: file.name, path: `/${file.name}`})
+
+    //         const newImage = fs.readFileSync(filePath);
+    //         const encImg = newImage.toString('base64');
+    //         const image = {
+    //             contentType: req.files.file.mimeType,
+    //             size: req.files.file.size,
+    //             img: Buffer(encImg, 'base64')
+    //         };
+
+
+    //         courseCollection.insertOne({title, price, description, image})
+    //         .then( result => {
+    //            fs.remove(filePath, error => {
+    //                if (error){console.log(error);
+    //                 res.status(500).send({msg: 'Failed to Upload your Image'});
+    //             }
+    //                res.send(result.insertedCount > 0)
+    //            })
+    //         })
+    //     })
+
+    // })
 
 
     app.get('/getCourse', (req, res) => {
